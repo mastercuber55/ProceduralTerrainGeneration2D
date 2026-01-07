@@ -1,0 +1,42 @@
+[gd_scene load_steps=6 format=3 uid="uid://d04vt4lda1j6j"]
+
+[ext_resource type="Texture2D" uid="uid://boru3jx6cbk17" path="res://Assets/tilemap.png" id="1_1pxmn"]
+[ext_resource type="Script" uid="uid://cb0xjcarrfeob" path="res://Scripts/ProceduralTerrainGenerator.gd" id="1_8x5y6"]
+[ext_resource type="TileSet" uid="uid://d2xakbd0v5gfj" path="res://Scenes/Kenney.tres" id="1_j8om2"]
+[ext_resource type="Script" uid="uid://c72vtb2eum4ck" path="res://Scripts/Player.gd" id="3_2j7f6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j8om2"]
+size = Vector2(16, 16.5)
+
+[node name="SceneGame" type="Node2D"]
+
+[node name="Parallax2D" type="Parallax2D" parent="."]
+repeat_size = Vector2(16, 16)
+repeat_times = 32
+
+[node name="Fallback" type="TileMapLayer" parent="Parallax2D"]
+tile_map_data = PackedByteArray(0, 0, 35, 0, 20, 0, 0, 0, 7, 0, 3, 0, 0, 0)
+tile_set = ExtResource("1_j8om2")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("1_j8om2")
+script = ExtResource("1_8x5y6")
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(574, 323)
+script = ExtResource("3_2j7f6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
+texture = ExtResource("1_1pxmn")
+region_enabled = true
+region_rect = Rect2(144, 64, 16, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+position = Vector2(0, -0.25)
+shape = SubResource("RectangleShape2D_j8om2")
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+zoom = Vector2(3, 3)
+limit_enabled = false
+position_smoothing_enabled = true
