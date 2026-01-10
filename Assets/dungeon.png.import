@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://vq7naia5hj8c"
-path="res://.godot/imported/New Basic Tiles Free.png-3ca871328659eb5d88e6785ee3cb2d81.ctex"
+uid="uid://dlu03i2ad1pmp"
+path="res://.godot/imported/dungeon.png-18bbafc99c98880f568d4274c293f13a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Pixel Plains Free Pack/New Basic Tiles Free.png"
-dest_files=["res://.godot/imported/New Basic Tiles Free.png-3ca871328659eb5d88e6785ee3cb2d81.ctex"]
+source_file="res://Assets/dungeon.png"
+dest_files=["res://.godot/imported/dungeon.png-18bbafc99c98880f568d4274c293f13a.ctex"]
 
 [params]
 

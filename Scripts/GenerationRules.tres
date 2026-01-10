@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="GenerationRules" load_steps=2 format=3 uid="uid://d05ekblp1yedv"]
+
+[ext_resource type="Script" uid="uid://cx61sbibhlj6j" path="res://Scripts/GenerationConfiguration.gd" id="1_1wlg3"]
+
+[resource]
+script = ExtResource("1_1wlg3")

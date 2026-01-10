@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d2lftt0egnlce"
-path="res://.godot/imported/Trees and bushes.png-49040003b19d4ee5a433255590570022.ctex"
+uid="uid://boru3jx6cbk17"
+path="res://.godot/imported/overworld.png-380f65a6c3de185bf91547d97a72a78b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Pixel Plains Free Pack/Trees and bushes.png"
-dest_files=["res://.godot/imported/Trees and bushes.png-49040003b19d4ee5a433255590570022.ctex"]
+source_file="res://Assets/overworld.png"
+dest_files=["res://.godot/imported/overworld.png-380f65a6c3de185bf91547d97a72a78b.ctex"]
 
 [params]
 
