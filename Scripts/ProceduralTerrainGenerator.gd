@@ -1,17 +1,17 @@
 extends Node2D
 
 @export var config: GenerationRules
+@export var TerrainCurve: Curve
+
+@export var TerrainLevels: Array[TerrainLayer] = []
 
 var noise := FastNoiseLite.new()
-var lookupTable := {}
 var chunks = {}
+var lastChunkCoords : Vector2i
 
-@onready var ground := $"../Ground"
-@onready var plants := $"../Plants"
+@onready var ground := $"."
 
 func _ready() -> void:
-	
-	_buildTileLookUp()
 	
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN
 	noise.seed = randi()
@@ -24,90 +24,58 @@ func _process(_delta: float) -> void:
 		floor(playerPos.x / (config.chunk_size * config.tile_size)),
 		floor(playerPos.y / (config.chunk_size * config.tile_size))
 	)
-	
+	if chunkCoords != lastChunkCoords:
+		updateChunks(chunkCoords)
+		lastChunkCoords = chunkCoords
+
+func updateChunks(chunkCoords: Vector2i):
 	for x in range(chunkCoords.x - 2, chunkCoords.x + 3):
 		for y in range(chunkCoords.y - 2, chunkCoords.y + 3):
 			var targetChunk = Vector2i(x, y)
 			if not chunks.has(targetChunk):
-				_genChunk(targetChunk)
+				generateChunk(targetChunk)
 				chunks[targetChunk] = true # marking as Active -> true
 				
 	for chunk in chunks.keys():
 		if 	abs(chunk.x - chunkCoords.x) > config.render_distance or\
 			abs(chunk.y - chunkCoords.y) > config.render_distance:
-				_remChunk(chunk)
+				removeChunk(chunk)
 				chunks.erase(chunk)
 
 # TODO: make each plant be a dedicated scene with health and animation
-func _genPlant(n, pos):
-	
+func generateTree(n, pos):
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(pos) + n
-	var roll := rng.randf()
-	
-	for z in config.plant_chances:
-		if roll < z.chance:
-			plants.set_cell(pos, 0, z.tile)
-			return
 
-func _genChunk(chunk: Vector2i):	
+func getTile(x: int, y: int) -> TerrainLayer:
+	var rawNoise = noise.get_noise_2d(x, y)
+	# convert from [-1, 1] to [0, -1] for curves
+	var normalizedNoise = (rawNoise + 1.0) / 2.0
+	var curvedHeight = TerrainCurve.sample(normalizedNoise)
+	
+	for layer in TerrainLevels:
+		if curvedHeight <= layer.Threshold:
+			return layer
+	return null
+	
+func generateChunk(chunk: Vector2i):
 	var start = chunk * config.chunk_size
-	var groupTiles : Dictionary = {}
+	#var groupTiles : Array[Vector2i] = []
 	
 	for x in range(start.x, start.x + config.chunk_size):
 		for y in range(start.y, start.y + config.chunk_size):
-			var n = noise.get_noise_2d(x, y)
-			var data := _getTile(n)
-			
-			_genPlant(n, Vector2i(x, y))
-			
-			if data.has("terrainID"):
-				var terrainID = data["terrainID"]
-				if not groupTiles.has(terrainID):
-					groupTiles[terrainID] = []
-				groupTiles[terrainID].append(Vector2i(x, y))
-			else:
-				var lookupData = lookupTable[data.tile]
-				ground.set_cell(Vector2i(x, y), lookupData.srcID, lookupData.coords)
+			var tile := getTile(x, y)
+			if tile == null:
+				continue
+			ground.set_cell(Vector2i(x, y), tile.sourceID, tile.AtlasCoords)
+	#if groupTiles.is_empty():
+		#return
 	
-	if groupTiles.is_empty():
-		return
+	#ground.set_cells_terrain_connect(groupTiles, 0, 0)
 	
-	for group in groupTiles:
-		ground.set_cells_terrain_connect(groupTiles[group], 0, group)
-	
-func _remChunk(chunk: Vector2i):	
+func removeChunk(chunk: Vector2i):	
 	var start = chunk * config.chunk_size
 	
 	for x in range(start.x, start.x + config.chunk_size):
 		for y in range(start.y, start.y + config.chunk_size):
 			ground.set_cell(Vector2i(x, y), -1)
-			
-func _getTile(n: float) -> Dictionary:
-	for level in config.terrain_levels:
-		if n <= level.max:
-			return level
-	return config.terrain_levels[0]
-
-func _buildTileLookUp():
-	
-	var srcCount : int = ground.tile_set.get_source_count()
-	
-	for iSrc in range(srcCount):
-		var srcID = ground.tile_set.get_source_id(iSrc)
-		var src = ground.tile_set.get_source(srcID)
-		
-		if src is TileSetAtlasSource:
-			for iTiles in range(src.get_tiles_count()):
-				var coords = src.get_tile_id(iTiles)	
-				var tileData = src.get_tile_data(coords, 0)
-				
-				if tileData == null:
-					continue
-					
-				var terrainVal : StringName = tileData.get_custom_data("TileName")
-				
-				if terrainVal.is_empty():
-					continue
-					
-				lookupTable[terrainVal] = { "srcID": srcID, "coords": coords,  }
