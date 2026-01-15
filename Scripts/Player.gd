@@ -1,16 +1,17 @@
 extends CharacterBody2D
 
-const SPEED := 10.0
 enum Direction { Left, Up, Down, Right }
-var DirectionNames = ["Left", "Up", "Down", "Right"]
 
 @onready var sprite := $PlayerSprite
+@onready var generator := $"../NoiseGenerator"
 
 var dir : Vector2
 var lastDir := Direction.Down
 
+const SPEED := 15.0
+
 func _ready() -> void:
-	updateAnimation()
+	pass
 
 func _physics_process(_delta: float) -> void:
 	
@@ -26,7 +27,6 @@ func _physics_process(_delta: float) -> void:
 		velocity = Vector2.ZERO
 		
 	wobblePlayer()
-	updateAnimation()
 	
 	move_and_slide()
 
@@ -46,9 +46,3 @@ func wobblePlayer():
 		sprite.scale.y  = 1 + sin(time) / 10
 	else:
 		sprite.scale.y = 1
-
-func updateAnimation():
-	if dir != Vector2.ZERO:
-		sprite.play("Walk" + DirectionNames[lastDir])
-	else:
-		sprite.play("Idle" + DirectionNames[lastDir])

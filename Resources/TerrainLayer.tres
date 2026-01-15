@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="TerrainLayer" load_steps=2 format=3 uid="uid://c3i8qiklh18ja"]
-
-[ext_resource type="Script" uid="uid://bhqvqubuealj5" path="res://Scripts/TerrainLayer.gd" id="1_a0c6q"]
-
-[resource]
-script = ExtResource("1_a0c6q")
-metadata/_custom_type_script = "uid://bhqvqubuealj5"
